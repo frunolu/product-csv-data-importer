@@ -12,4 +12,6 @@ cache-clean:
 
 start-project: up composer-install
 
+import-product:
+	docker-compose exec php su --command="bin/console import:product $(input)" www-data
 
