@@ -18,6 +18,7 @@ class Bootstrap
             $compiler->loadConfig($appDir . '/config/config.neon');
         });
 
+
         $container = new $class();
         if ($container instanceof Container === false) {
             throw new RuntimeException('Unable to create DI container.');
@@ -26,3 +27,5 @@ class Bootstrap
         return $container;
     }
 }
+
+

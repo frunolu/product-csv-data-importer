@@ -36,9 +36,8 @@ final class ImportProductDataCommand extends Command
             ->addArgument(self::INPUT_ARG, InputArgument::REQUIRED, 'Zipped Product Data', 'data/sourceData.zip');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
-        return $this->productDataImporter->import($input->getArgument(self::INPUT_ARG));
-
+        echo 0;
     }
 }
