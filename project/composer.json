@@ -3,12 +3,23 @@
 	"license": ["MIT", "BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
 	"require": {
 		"php": ">= 8.0",
+		"nette/application": "^3.1",
+		"nette/bootstrap": "^3.2",
+		"nette/caching": "^3.2",
+		"nette/database": "^3.1",
 		"nette/di": "^3.1",
-		"symfony/console": "^6.0",
-		"ext-zip": "*",
-		"parsecsv/php-parsecsv": "^1.3"
+		"nette/robot-loader": "^4.0",
+		"nette/security": "^3.1",
+		"tracy/tracy": "^2.9",
+		"contributte/console": "^0.9.2",
+		"nextras/migrations": "^3.2",
+		"nettrine/orm": "^0.8.0",
+		"parsecsv/php-parsecsv": "^1.3",
+		"league/csv": "^9.8"
 	},
 	"require-dev": {
+		"roave/security-advisories": "dev-latest"
+		,
 		"nette/tester": "^2.4",
 		"symfony/thanks": "^1"
 
