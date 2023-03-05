@@ -113,9 +113,8 @@ class ProductDataImporter
         return $data;
 
 
-//        echo "\n</table></center></body></html>";
+        echo "\n</table></center></body></html>";
 }
-
     /**
      * @throws OptimisticLockException
      * @throws ORMException
@@ -134,12 +133,12 @@ class ProductDataImporter
             } else {
                 //import {
                 $product = new Product();
-                $product->setSku($data[$productDataRow['sku']] ?? null);
-                $product->setEan($data[$productDataRow['ean']] ?? null);
-                $product->setName($data[$productDataRow['name']] ?? null);
-                $product->setShortDesc($data[$productDataRow['shortDesc']] ?? null);
-                $product->setManufacturer($data[$productDataRow['manufacturer']] ?? null);
-                $product->setPrice($data[$productDataRow['price']] ?? null);
+                $product->setSku($productDataRow['sku']);
+                $product->setEan($productDataRow['ean']);
+                $product->setName($productDataRow['name']);
+                $product->setShortDesc($productDataRow['shortDesc']);
+                $product->setManufacturer($productDataRow['manufacturer']);
+                $product->setPrice($productDataRow['price']);
                 try {
                     $this->entityManager->persist($product);
                 } catch (ORMException $e) {

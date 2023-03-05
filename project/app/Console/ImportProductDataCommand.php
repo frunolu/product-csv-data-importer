@@ -11,20 +11,18 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+
 final class ImportProductDataCommand extends Command
 {
 //    private const INPUT_ARG = 'file';
-
-    private SymfonyStyle $symfonyStyle;
 
     private ProductDataImporter $productDataImporter;
 
     public function __construct(
         ProductDataImporter $productDataImporter,
-        SymfonyStyle $symfonyStyle
+
     ) {
         parent::__construct();
-        $this->symfonyStyle = $symfonyStyle;
         $this->productDataImporter = $productDataImporter;
     }
 
