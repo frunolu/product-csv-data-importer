@@ -13,28 +13,31 @@ class ProductDataImporter
 {
 
     /**
-     * @var csv $csvParser @inject
+     * @var csv $csvParser
      */
     private csv  $csvParser;
 
     private ProductRepository $productRepository;
 
+    /**
+     * @var EntityManager $entityManager @inject
+     */
     private EntityManager $entityManager;
 
-    /**
-     * @param csv $csvParser
-     * @param ProductRepository $productRepository
-     * @param EntityManager $entityManager
-     */
-    public function __construct(csv $csvParser, ProductRepository $productRepository, EntityManager $entityManager)
-    {
-        $this->csvParser = $csvParser;
-        $this->productRepository = $productRepository;
-        $this->entityManager = $entityManager;
-    }
+//    /**
+//     * @param csv $csvParser
+//     * @param ProductRepository $productRepository
+//     * @param EntityManager $entityManager
+//     */
+//    public function __construct(csv $csvParser, ProductRepository $productRepository, EntityManager $entityManager)
+//    {
+//        $this->csvParser = $csvParser;
+//        $this->productRepository = $productRepository;
+//        $this->entityManager = $entityManager;
+//    }
     private function csvParser()
     {
-        $this->csvParser->auto('project/app/Data/Zadanie - jr PHP.zip');
+        $this->csvParser->auto('project/app/Data/Zadanie-jr-PHP.zip');
     }
 
     private function prepare(string $zippedFile): array
@@ -46,7 +49,7 @@ class ProductDataImporter
 
         /**
          * destination: The $destination parameter can be used to specify the location where to extract the files.
-        entries: The $entries parameter can be used to specify a single file name which is to be extracted, or you can use it to pass an array of files.
+         * entries: The $entries parameter can be used to specify a single file name which is to be extracted, or you can use it to pass an array of files.
          */
 
 //  ZipArchive::extractTo( string $destination, mixed $entries ) : bool
@@ -55,8 +58,7 @@ class ProductDataImporter
         $zip = new ZipArchive;
 
 // Zip File Name
-        if ($zip->open('project/app/Data/Zadanie - jr PHP.zip') === TRUE) {
-
+        if ($zip->open('project/app/Data/Zadanie - jr PHP.zip') === true) {
             // Unzip Path
             $zip->extractTo('project/app/Data');
             $zip->close();
@@ -64,15 +66,6 @@ class ProductDataImporter
         } else {
             echo 'Unzipped Process failed';
         }
-
-
-        return  $this->csvParser->auto($zip);
-
-//        $data = [
-////            ['sku' => '564584', 'ean' => 'asdasd'],
-////            ['sku' => '564584', 'ean' => 'asdasd'],
-////            ['sku' => '564584', 'ean' => 'asdasd'],
-//        ];
     }
 
     public function import(string $zippedFile): void
@@ -81,7 +74,7 @@ class ProductDataImporter
         foreach ($data as $productDataRow) {
             // import do db
 
-            $product = $this->productRepository->finnBySku($productDataRow['sku']);
+            $product = $this->productRepository->findBySku($productDataRow['sku']);
             if($product === null){
                 //import {
                 $product = new Product();
