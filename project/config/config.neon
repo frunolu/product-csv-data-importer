@@ -21,11 +21,11 @@ di:
 		tags: no
 
 console:
-	name: Nette project
+	name: product-csv-data-importer
 	version: '1.0'
 	catchExceptions: true
 	autoExit: true
-	url: http://nette-shop:90/
+	url: http://ProductDataImporter:91/
 	lazy: false
 
 extensions:
