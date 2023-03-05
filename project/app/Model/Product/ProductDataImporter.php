@@ -6,9 +6,12 @@ namespace App\Model\Product;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\OptimisticLockException;
 use ParseCsv\csv;
 use App\Model\Product\ProductRepository;
+use Tracy\Debugger;
 use ZipArchive;
 
 
@@ -92,7 +95,7 @@ class ProductDataImporter
 
         // Open a file
         $file = fopen("/project/app/Data/stockData.csv", "rb");
-        $data = fgetcsv($file);
+        $data = fgetcsv($file,1000, ";");
         // Fetching data from csv file row by row
 //        while (($data = fgetcsv($file)) !== false) {
 //            // HTML tag for placing in row format
@@ -106,10 +109,17 @@ class ProductDataImporter
 
         // Closing the file
         fclose($file);
+        Debugger::barDump($data);
+        return $data;
+
 
 //        echo "\n</table></center></body></html>";
-        return $data;
 }
+
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     public function import(string $file): void
     {
         $data = $this->prepare($file);
@@ -117,7 +127,11 @@ class ProductDataImporter
             // import do db
 
             $product = $this->productRepository->findBySku($productDataRow['sku']);
-            if($product === null){
+            if(false !== $product) {
+                //update
+                $currentStock = $product->getStock();
+                $product->setStock($productDataRow['stock'] + $currentStock);
+            } else {
                 //import {
                 $product = new Product();
                 $product->setSku($data[$productDataRow['sku']] ?? null);
@@ -126,12 +140,10 @@ class ProductDataImporter
                 $product->setShortDesc($data[$productDataRow['shortDesc']] ?? null);
                 $product->setManufacturer($data[$productDataRow['manufacturer']] ?? null);
                 $product->setPrice($data[$productDataRow['price']] ?? null);
-                $this->entityManager->persist($product);
-
-            } else {
-                //update
-                $currentStock = $product->getStock();
-                $product->setStock($productDataRow['stock'] + $currentStock);
+                try {
+                    $this->entityManager->persist($product);
+                } catch (ORMException $e) {
+                }
             }
 
         }
