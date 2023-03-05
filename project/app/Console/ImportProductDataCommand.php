@@ -14,31 +14,31 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 final class ImportProductDataCommand extends Command
 {
 //    private const INPUT_ARG = 'file';
-//
-//    private SymfonyStyle $symfonyStyle;
-//
-//    private ProductDataImporter $productDataImporter;
-//
-//    public function __construct(
-//        ProductDataImporter $productDataImporter,
-//        SymfonyStyle $symfonyStyle
-//    ) {
-//        parent::__construct();
-//        $this->symfonyStyle = $symfonyStyle;
-//        $this->productDataImporter = $productDataImporter;
-//    }
+
+    private SymfonyStyle $symfonyStyle;
+
+    private ProductDataImporter $productDataImporter;
+
+    public function __construct(
+        ProductDataImporter $productDataImporter,
+        SymfonyStyle $symfonyStyle
+    ) {
+        parent::__construct();
+        $this->symfonyStyle = $symfonyStyle;
+        $this->productDataImporter = $productDataImporter;
+    }
 
     protected function configure(): void
     {
         $this
             ->setName('product:import')
             ->setDescription('Import product data from zipped csv file')
-            ->addArgument('file', InputArgument::OPTIONAL, 'Zipped Product Data', 'data/sourceData.zip');
+            ->addArgument('file', InputArgument::REQUIRED, 'Zipped Product Data');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-//        $this->productDataImporter->import($input->getArgument('file'));
+    $this->productDataImporter->import($input->getArgument('file'));
         return 0;
     }
 }
