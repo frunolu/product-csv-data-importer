@@ -1,5 +1,91 @@
 parameters:
+	doctrine:
+		host: ''
+		user: ''
+		password: ''
+		dbname: ''
+
+application:
+	errorPresenter: Error
+	mapping:
+		*: App\*Module\Presenters\*Presenter
+
+
+session:
+	expiration: 14 days
+
+
+di:
+	export:
+		parameters: no
+		tags: no
+
+console:
+	name: Nette project
+	version: '1.0'
+	catchExceptions: true
+	autoExit: true
+	url: http://nette-shop:90/
+	lazy: false
+
+extensions:
+	console: Contributte\Console\DI\ConsoleExtension(%consoleMode%)
+	migrations: Nextras\Migrations\Bridges\NetteDI\MigrationsExtension
+	doctrine.annotations: Nettrine\Annotations\DI\AnnotationsExtension
+	doctrine.dbal: Nettrine\DBAL\DI\DbalExtension
+	doctrine.dbal.console: Nettrine\DBAL\DI\DbalConsoleExtension
+	doctrine.orm: Nettrine\ORM\DI\OrmExtension
+	doctrine.orm.annotations: Nettrine\ORM\DI\OrmAnnotationsExtension
+	doctrine.orm.console: Nettrine\ORM\DI\OrmConsoleExtension
+	doctrine.cache: Nettrine\Cache\DI\CacheExtension
+
+
+database:
+	dsn: ''
+	user: ''
+	password: ''
+
+migrations:
+	dir: %appDir%/../migrations
+	driver: mysql
+	dbal: doctrine
+
+doctrine.orm:
+	configuration:
+		autoGenerateProxyClasses: true
+		proxyDir: %tempDir%/proxies
+
+doctrine.orm.annotations:
+	mapping:
+		App\Model: %appDir%/Model
+
+doctrine.dbal:
+	debug:
+		panel: %debugMode%
+	connection:
+		driver: pdo_mysql
+		host: %doctrine.host%
+		user: %doctrine.user%
+		password: %doctrine.password%
+		dbname: %doctrine.dbname%
+
+search:
+	-
+		in: %appDir%
+		classes:
+			- *Factory
+			- *Facade
+
 
 services:
-	- Symfony\Component\Console\Application
+	- App\Router\RouterFactory::createRouter
 	- App\Console\ImportProductDataCommand
+	- App\Model\Product\ProductDataImporter
+	- App\Model\Product\ProductRepository
+	- ParseCsv\Csv
+
+	input: Symfony\Component\Console\Input\ArgvInput
+	output: Symfony\Component\Console\Output\ConsoleOutput
+	- Symfony\Component\Console\Style\SymfonyStyle(@input, @output)
+	commands.foo:
+		class: App\Console\ImportProductDataCommand
