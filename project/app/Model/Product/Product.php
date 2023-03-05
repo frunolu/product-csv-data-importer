@@ -50,14 +50,26 @@ class Product
     private $price;
 
     /**
-     * @ORM\OneToOne(targetEntity="Stock", mappedBy="product")
+     * @ORM\Column(type="integer"))
      */
     private $stock;
 
-    public function __construct()
-    {
-        $this->stock = new Stock();
+    public function __construct(
+        string $sku,
+        string $name,
+        string $shortDesc,
+        string $manufacturer,
+        float $price,
+        int $stock
+    ) {
+        $this->sku = $sku;
+        $this->name = $name;
+        $this->shortDesc = $shortDesc;
+        $this->manufacturer = $manufacturer;
+        $this->price = $price;
+        $this->stock = $stock;
     }
+
 
     // Getters and setters
 
