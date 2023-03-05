@@ -54,14 +54,7 @@ class Product
      */
     private $stock;
 
-    public function __construct(
-        string $sku,
-        string $name,
-        string $shortDesc,
-        string $manufacturer,
-        float $price,
-        int $stock
-    ) {
+    public function __construct() {
         $this->sku = $sku;
         $this->name = $name;
         $this->shortDesc = $shortDesc;
