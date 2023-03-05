@@ -20,9 +20,9 @@ class ProductDataImporter
 
 
     /**
-     * @var csv $csvParser  @inject
+     * @var csv $csvParser @inject
      */
-    private csv  $csvParser;
+    private csv $csvParser;
 
     /**
      * @var ProductRepository $productRepository @inject
@@ -34,12 +34,11 @@ class ProductDataImporter
      */
     private EntityManager $entityManager;
 
-    public function __construct(    ProductRepository $productRepository, EntityManagerInterface $entityManager, csv $csv)
+    public function __construct(ProductRepository $productRepository, EntityManagerInterface $entityManager, csv $csv)
     {
         $this->csvParser = $csv;
         $this->productRepository = $productRepository;
         $this->entityManager = $entityManager;
-
     }
 //    /**
 //     * @param csv $csvParser
@@ -88,14 +87,16 @@ class ProductDataImporter
 
     public function prepare(): object|array
 //    {
+//
 //        $this->csvParser();
 //        $csvPath = "/project/app/Data/commonData.csv";
-    {             echo "<html><body><center><table>\n\n";
+    {
+        echo "<html><body><center><table>\n\n";
 
 
         // Open a file
         $file = fopen("/project/app/Data/stockData.csv", "rb");
-        $data = fgetcsv($file,1000, ";");
+        $data = fgetcsv($file, 1000, ";");
         // Fetching data from csv file row by row
 //        while (($data = fgetcsv($file)) !== false) {
 //            // HTML tag for placing in row format
@@ -110,11 +111,13 @@ class ProductDataImporter
         // Closing the file
         fclose($file);
         Debugger::barDump($data);
+
         return $data;
 
 
         echo "\n</table></center></body></html>";
-}
+    }
+
     /**
      * @throws OptimisticLockException
      * @throws ORMException
@@ -126,29 +129,43 @@ class ProductDataImporter
             // import do db
 
             $product = $this->productRepository->findBySku($productDataRow['sku']);
-            if(false !== $product) {
+            if ($existingProduct = $this->productRepository->findBySku($productDataRow['sku'])) {
                 //update
-                $currentStock = $product->getStock();
-                $product->setStock($productDataRow['stock'] + $currentStock);
+                $this->updateProduct();
+
+                $existingProduct = $product->getStock();
+                $product->setStock($productDataRow['stock'] + $existingProduct);
+                continue;
             } else {
                 //import {
-                $product = new Product();
-                $product->setSku($productDataRow['sku']);
-                $product->setEan($productDataRow['ean']);
-                $product->setName($productDataRow['name']);
-                $product->setShortDesc($productDataRow['shortDesc']);
-                $product->setManufacturer($productDataRow['manufacturer']);
-                $product->setPrice($productDataRow['price']);
+                $this->createProduct();
                 try {
                     $this->entityManager->persist($product);
                 } catch (ORMException $e) {
                 }
             }
-
         }
 
         $this->entityManager->flush();
+    }
+
+    private function updateProduct($product, $productDataRow): void
+    {
+        $existingProduct = $product->getStock();
+        $product->setStock($productDataRow['stock'] + $existingProduct);
+        try {
+            $this->entityManager->persist($product);
+        } catch (ORMException $e) {
+        }
+    }
+
+    /**
+     * @throws ORMException
+     */
+    private function createProduct($productDataRow)
+    {
 
     }
+
 
 }
