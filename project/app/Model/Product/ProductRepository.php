@@ -6,13 +6,14 @@ namespace App\Model\Product;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
-class ProductRepository
+class ProductRepository extends EntityRepository
 {
 
     private EntityRepository $entityRepository;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
+        parent::__construct($entityManager, $entityManager->getClassMetadata(Product::class));
         $this->entityRepository = $entityManager->getRepository($this->getEntityName());
     }
 
