@@ -5,18 +5,25 @@ declare(strict_types=1);
 namespace App\Model\Product;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping as ORM;
 use ParseCsv\csv;
+use App\Model\Product\ProductRepository;
 use ZipArchive;
 
 
 class ProductDataImporter
 {
 
+
     /**
-     * @var csv $csvParser
+     * @var csv $csvParser  @inject
      */
     private csv  $csvParser;
 
+    /**
+     * @var ProductRepository $productRepository @inject
+     */
     private ProductRepository $productRepository;
 
     /**
@@ -24,6 +31,13 @@ class ProductDataImporter
      */
     private EntityManager $entityManager;
 
+    public function __construct(    ProductRepository $productRepository, EntityManagerInterface $entityManager, csv $csv)
+    {
+        $this->csvParser = $csv;
+        $this->productRepository = $productRepository;
+        $this->entityManager = $entityManager;
+
+    }
 //    /**
 //     * @param csv $csvParser
 //     * @param ProductRepository $productRepository
@@ -39,38 +53,66 @@ class ProductDataImporter
     {
         $this->csvParser->auto('project/app/Data/Zadanie-jr-PHP.zip');
     }
-
-    private function prepare(string $zippedFile): array
-    {
-        /**
-         * odzipujes subor
-         * vyparsovat csv
-         */
-
-        /**
-         * destination: The $destination parameter can be used to specify the location where to extract the files.
-         * entries: The $entries parameter can be used to specify a single file name which is to be extracted, or you can use it to pass an array of files.
-         */
+//
+//    public function prepare(string $zippedFile): array
+//    {
+//        /**
+//         * odzipujes subor
+//         * vyparsovat csv
+//         */
+//
+//        /**
+//         * destination: The $destination parameter can be used to specify the location where to extract the files.
+//         * entries: The $entries parameter can be used to specify a single file name which is to be extracted, or you can use it to pass an array of files.
+//         */
 
 //  ZipArchive::extractTo( string $destination, mixed $entries ) : bool
 
 
-        $zip = new ZipArchive;
+//        $zip = new ZipArchive;
+//
+//// Zip File Name
+//        if ($zip->open('project/app/Data/Zadanie - jr PHP.zip') === true) {
+//            // Unzip Path
+//            $zip->extractTo('project/app/Data');
+//            $zip->close();
+//            echo 'Unzipped Process Successful!';
+//        } else {
+//            echo 'Unzipped Process failed';
+//        }
+//    }
 
-// Zip File Name
-        if ($zip->open('project/app/Data/Zadanie - jr PHP.zip') === true) {
-            // Unzip Path
-            $zip->extractTo('project/app/Data');
-            $zip->close();
-            echo 'Unzipped Process Successful!';
-        } else {
-            echo 'Unzipped Process failed';
-        }
-    }
 
-    public function import(string $zippedFile): void
+    public function prepare(): object|array
+//    {
+//        $this->csvParser();
+//        $csvPath = "/project/app/Data/commonData.csv";
+    {             echo "<html><body><center><table>\n\n";
+
+
+        // Open a file
+        $file = fopen("/project/app/Data/stockData.csv", "rb");
+        $data = fgetcsv($file);
+        // Fetching data from csv file row by row
+//        while (($data = fgetcsv($file)) !== false) {
+//            // HTML tag for placing in row format
+//            echo "<tr>";
+//            foreach ($data as $i) {
+//                echo "<td>".htmlspecialchars($i)
+//                    ."</td>";
+//            }
+//            echo "</tr> \n";
+//        }
+
+        // Closing the file
+        fclose($file);
+
+//        echo "\n</table></center></body></html>";
+        return $data;
+}
+    public function import(string $file): void
     {
-        $data = $this->prepare($zippedFile);
+        $data = $this->prepare($file);
         foreach ($data as $productDataRow) {
             // import do db
 
